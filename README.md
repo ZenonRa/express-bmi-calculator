@@ -31,7 +31,7 @@
 
 ## Установка/запуск
 `bash
-git clone <ваш-репозиторий>
+git clone <https://github.com/ZenonRa/express-bmi-calculator>
 cd express-bmi-calculator
 npm install
 npm run dev   # или npm start
