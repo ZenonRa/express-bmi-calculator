@@ -1,0 +1,4 @@
+node_modules/
+.env
+.DV_Store
+/screenshots/*.png

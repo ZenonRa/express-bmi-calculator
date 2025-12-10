@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BMI Calculator</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <main class="card">
+        <h1>BMI Calculator</h1>
+        <form id="bmiForm">
+            <label>Weight (kg): <input name="weightKg" type="number" step="0.1" required></label>
+            <label>Height (cm): <input name="heightCm" type="number" step="0.1" required></label>
+            <label><input type="checkbox" name="save"> Save calculation</label>
+            <button type="submit">Calculate</button>
+        </form>
+
+
+        <section id="result"></section>
+
+
+        <h2>Saved records</h2>
+        <button id="loadRecords">Load records</button>
+        <ul id="records"></ul>
+    </main>
+
+
+    <script>
+        const form = document.getElementById('bmiForm');
+        const result = document.getElementById('result');
+        const recordsList = document.getElementById('records');
+        const loadBtn = document.getElementById('loadRecords');
+
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fd = new FormData(form);
+            const body = {
+                weightKg: fd.get('weightKg'),
+                heightCm: fd.get('heightCm'),
+                save: fd.get('save') === 'on'
+            };
+            const res = await fetch('/api/bmi', {
+                method: 'POST',
+                headers: { 'Content-Type':'application/json' },
+                body: JSON.stringify(body)
+            });
+            const json = await res.json();
+            if (res.ok) {
+                result.innerText = JSON.stringify(json, null, 2);
+            } else {
+                result.innerText = 'Error: ' + (json.error || JSON.stringify(json));
+            }
+        });
+
+
+        loadBtn.addEventListener('click', async () => {
+            const res = await fetch('/api/bmi/records');
+            const arr = await res.json();
+            recordsList.innerHTML = arr.map(r => <li>id:${r.id} — BMI:${r.bmi} (${r.category}) — weight:${r.weightKg} height:${r.heightCm}</li>).join('');
+        });
+    </script>
+</body>
+</html>
